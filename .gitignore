@@ -1,2 +1,5 @@
 /models/
 /.idea/
+
+.vscode/
+venv/
