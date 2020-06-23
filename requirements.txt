@@ -7,6 +7,7 @@ chardet==3.0.4
 cycler==0.10.0
 decorator==4.4.2
 Django==3.0.7
+django-cors-headers==3.4.0
 djangorestframework==3.11.0
 filelock==3.0.12
 future==0.18.2

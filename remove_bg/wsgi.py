@@ -1,5 +1,5 @@
 """
-WSGI config for remove_bg_API project.
+WSGI config for remove_bg project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'remove_bg_API.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'remove_bg.settings')
 
 application = get_wsgi_application()
