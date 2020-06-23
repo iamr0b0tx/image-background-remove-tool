@@ -473,7 +473,7 @@ class U2NET:
         net.eval()
         self.__net__ = net  # Define model
 
-    def process_image(self, image_bytes):
+    def process_image(self, image_bytes, resolution):
         """
         Removes background from image and returns PIL RGBA Image.
         :param image_data: image bytes
@@ -487,6 +487,13 @@ class U2NET:
         if image is False or org_image is False:
             return False
         
+        image_width, image_height = org_image.size
+
+        if resolution == "low":
+            scale = .7
+            image_width = int(image_width * scale)
+            image_height = int(scale * image_height)
+
         image = image.type(torch.FloatTensor)
         if torch.cuda.is_available():
             image = Variable(image.cuda())
@@ -512,6 +519,9 @@ class U2NET:
         image = Image.composite(org_image, empty, mask)
 
         print("Finished! Time spent: {}".format(time.time() - start_time))
+            
+        if resolution == "low":
+            image = image.resize((image_width, image_height), Image.ANTIALIAS)
 
         image_io = BytesIO()
         image.save(image_io, format='PNG')

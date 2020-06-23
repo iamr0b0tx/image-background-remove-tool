@@ -3,6 +3,7 @@ import os, gdown
 from PIL import Image
 from io import BytesIO
 from .model import U2NET
+from skimage import transform
 
 from rest_framework import status
 from django.http import Http404, HttpResponse
@@ -27,15 +28,20 @@ model = U2NET()
 
 @api_view(('POST',))
 def remove_bg(request):
+    resolution = request.data.get("resolution", None)
     image_object = request.FILES.get("image", None)
     
     try:
+        if resolution is None or image_object is None:
+            raise AttributeError
+
         # load bytes
         image = image_object.read()
-        # print(type(image))
 
         # processs
-        image = model.process_image(image)
+        image = model.process_image(image, resolution=resolution)
+        if image is None:
+            raise AttributeError
         
         return HttpResponse(image, content_type="image/png")
 
@@ -45,16 +51,40 @@ def remove_bg(request):
 
 @api_view(('POST',))
 def replace_bg(request):
-    image_object1 = request.FILES.get("image1", None)
-    image_object2 = request.FILES.get("image2", None)
+    image = request.FILES.get("image", None)
+    background = request.FILES.get("background", None)
     
     try:
-        # load bytes
-        image1 = Image.open(BytesIO(image_object1.read()))
-        image2 = Image.open(BytesIO(image_object2.read()))
+        if image is None or background is None:
+            raise AttributeError
 
-        new_image = Image.new('RGBA', image2.size, (0, 0, 0, 0))
-        new_image.paste(image2, (0, 0))
+        # load bytes
+        image = Image.open(BytesIO(image.read()))
+        background = Image.open(BytesIO(background.read()))
+
+        print(image.size)
+        print(background.size)
+        image_width, image_height = image.size
+        background_width, background_height = background.size
+
+        scale = max(1, image_height/background_height, image_width/background_width)
+
+        background_width = (background_width * scale)
+        background_height = (background_height * scale)
+        background = background.resize((background_width, background_height), Image.ANTIALIAS)
+
+        print(background_width, background_height)
+
+        left = .5 * (background_width - image_width)
+        right = left + image_width
+        top = .5 * (background_height - image_height)
+        bottom = top + image_height
+
+        print(left, top, right, bottom)
+        background = background.crop((left, top, right, bottom))
+
+        new_image = Image.new('RGBA', background.size, (0, 0, 0, 0))
+        new_image.paste(background, (0, 0))
         new_image.paste(image, (0, 0), mask=image)
 
         new_image_io = BytesIO()
