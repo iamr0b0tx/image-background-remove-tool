@@ -45,17 +45,16 @@ def remove_bg(request):
 
 @api_view(('POST',))
 def replace_bg(request):
-    image_object = request.FILES.get("image", None)
+    image_object1 = request.FILES.get("image1", None)
+    image_object2 = request.FILES.get("image2", None)
     
     try:
         # load bytes
-        image = Image.open(BytesIO(image_object.read()))
+        image1 = Image.open(BytesIO(image_object1.read()))
+        image2 = Image.open(BytesIO(image_object2.read()))
 
-        filename1 = 'bg.jpg'
-        bg = Image.open(filename1, 'r')
-
-        new_image = Image.new('RGBA', bg.size, (0, 0, 0, 0))
-        new_image.paste(bg, (0, 0))
+        new_image = Image.new('RGBA', image2.size, (0, 0, 0, 0))
+        new_image.paste(image2, (0, 0))
         new_image.paste(image, (0, 0), mask=image)
 
         new_image_io = BytesIO()
