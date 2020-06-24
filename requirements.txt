@@ -54,8 +54,8 @@ tensorflow==2.2.0
 tensorflow-estimator==2.2.0
 termcolor==1.1.0
 tifffile==2020.6.3
-torch==1.5.1+cpu
-torchvision==0.6.1+cpu
+torch==1.5.1
+torchvision==0.6.1
 tqdm==4.46.1
 urllib3==1.25.9
 Werkzeug==1.0.1
