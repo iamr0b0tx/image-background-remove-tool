@@ -25,7 +25,7 @@ SECRET_KEY = ')4-oix99wc^lb%*o3$ree#5roz)bx#ti*t-q4+nj39dmln#d$x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['magicremove.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['magicremove.herokuapp.com', '127.0.0.1', 'kewag.pythonanywhere.com']
 
 
 # Application definition
