@@ -50,7 +50,7 @@ def remove_bg(request):
         raise Http404("Invalid Image!")
 
 @api_view(('POST',))
-def replace_bg(request):
+def replace_bg_image(request):
     image = request.FILES.get("image", None)
     background = request.FILES.get("background", None)
     
@@ -96,3 +96,36 @@ def replace_bg(request):
     except (IOError, AttributeError) as e:
         print(e)
         raise Http404("Invalid Image!")
+
+@api_view(('POST',))
+def replace_bg_color(request):
+    image = request.FILES.get("image", None)
+    red = request.data.get("red", None)
+    green = request.data.get("green", None)
+    blue = request.data.get("blue", None)
+
+    try:
+        if image is None:
+            raise AttributeError
+
+        red, green, blue = list(map(int, [red, green, blue]))
+
+        # load bytes
+        image = Image.open(BytesIO(image.read()))
+
+        new_image = Image.new('RGBA', image.size, (red, green, blue, 255))
+        new_image.paste(image, (0, 0), mask=image)
+
+        new_image_io = BytesIO()
+        new_image.save(new_image_io, format='PNG')
+        new_image_bytes = InMemoryUploadedFile(new_image_io, None, 'result.png', 'image/png', new_image_io.tell, None)
+        
+        return HttpResponse(new_image_bytes, content_type="image/png")
+
+    except (IOError, AttributeError) as e:
+        print(e)
+        raise Http404("Invalid Image!")
+
+    except TypeError as e:
+        print(e)
+        raise Http404("Invalid RGB value(s)!")

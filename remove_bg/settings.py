@@ -55,7 +55,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL =  False
 CORS_ORIGIN_WHITELIST = [
-    "https://www.dev.magicremove.ch/",
+    "https://www.dev.magicremove.ch",
 ]
 
 ROOT_URLCONF = 'remove_bg.urls'

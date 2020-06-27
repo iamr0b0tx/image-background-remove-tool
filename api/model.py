@@ -489,10 +489,15 @@ class U2NET:
         
         image_width, image_height = org_image.size
 
+        scale = 1
         if resolution == "low":
+            scale = .5
+
+        else:
             scale = .7
-            image_width = int(image_width * scale)
-            image_height = int(scale * image_height)
+
+        image_width = int(image_width * scale)
+        image_height = int(scale * image_height)
 
         image = image.type(torch.FloatTensor)
         if torch.cuda.is_available():
@@ -520,7 +525,7 @@ class U2NET:
 
         print("Finished! Time spent: {}".format(time.time() - start_time))
             
-        if resolution == "low":
+        if resolution != "high":
             image = image.resize((image_width, image_height), Image.ANTIALIAS)
 
         image_io = BytesIO()
