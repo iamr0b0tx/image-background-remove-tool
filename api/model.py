@@ -490,6 +490,7 @@ class U2NET:
         image_width, image_height = org_image.size
 
         scale = 1
+
         if resolution == "low":
             scale = .5
 

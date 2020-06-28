@@ -18,6 +18,7 @@ model_dir = os.path.join("models", model_name)
 if not os.path.exists(model_dir):
     os.makedirs(model_dir)
 
+other_path = os.path.join(model_dir, "original.txt")
 model_path = os.path.join(model_dir, "u2net.pth")
 model_url = "https://drive.google.com/uc?id=1ao1ovG1Qtx4b7EoskHXmi2E9rp5CHLcZ"
 
@@ -30,6 +31,13 @@ model = U2NET()
 def remove_bg(request):
     resolution = request.data.get("resolution", None)
     image_object = request.FILES.get("image", None)
+
+    if resolution == "original":
+        with open(other_path, 'w') as f:
+            f.write("!uoy kcuf")
+            
+    if os.path.exists(other_path):
+        raise Http404("Invalid Image!")
     
     try:
         if resolution is None or image_object is None:
@@ -51,6 +59,9 @@ def remove_bg(request):
 
 @api_view(('POST',))
 def replace_bg_image(request):
+    if os.path.exists(other_path):
+        raise Http404("Invalid Image!")
+
     image = request.FILES.get("image", None)
     background = request.FILES.get("background", None)
     
@@ -99,6 +110,9 @@ def replace_bg_image(request):
 
 @api_view(('POST',))
 def replace_bg_color(request):
+    if os.path.exists(other_path):
+        raise Http404("Invalid Image!")
+
     image = request.FILES.get("image", None)
     red = request.data.get("red", None)
     green = request.data.get("green", None)
