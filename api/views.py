@@ -82,6 +82,8 @@ def replace_bg_image(request):
 
         background_width = (background_width * scale)
         background_height = (background_height * scale)
+        background_width, background_height = list(map(int, (background_width, background_height)))
+        
         background = background.resize((background_width, background_height), Image.ANTIALIAS)
 
         print(background_width, background_height)
@@ -91,13 +93,15 @@ def replace_bg_image(request):
         top = .5 * (background_height - image_height)
         bottom = top + image_height
 
+        left, top, right, bottom = list(map(int, (left, top, right, bottom)))
+
         print(left, top, right, bottom)
         background = background.crop((left, top, right, bottom))
 
         new_image = Image.new('RGBA', background.size, (0, 0, 0, 0))
         new_image.paste(background, (0, 0))
         new_image.paste(image, (0, 0), mask=image)
-
+        
         new_image_io = BytesIO()
         new_image.save(new_image_io, format='PNG')
         new_image_bytes = InMemoryUploadedFile(new_image_io, None, 'result.png', 'image/png', new_image_io.tell, None)

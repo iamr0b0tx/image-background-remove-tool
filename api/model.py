@@ -483,18 +483,17 @@ class U2NET:
 
         print("Load image")
         image, org_image = self.__load_image__(image_bytes)  # Load image
-        
+        print(image.shape, org_image.size)
         if image is False or org_image is False:
             return False
         
         image_width, image_height = org_image.size
 
         scale = 1
-
         if resolution == "low":
             scale = .5
 
-        else:
+        if resolution == "mid":
             scale = .7
 
         image_width = int(image_width * scale)
@@ -523,7 +522,7 @@ class U2NET:
         print("Apply mask to image")
         empty = Image.new("RGBA", org_image.size, (0, 0, 0, 0))
         image = Image.composite(org_image, empty, mask)
-
+    
         print("Finished! Time spent: {}".format(time.time() - start_time))
             
         if resolution != "high":
