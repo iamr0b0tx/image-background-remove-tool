@@ -102,13 +102,15 @@ def replace_bg_image(request):
         background = background.crop((left, top, right, bottom))
 
         new_image = Image.new('RGBA', background.size, (0, 0, 0, 0))
-        new_image.paste(background, (0, 0))
-        new_image.paste(image, (0, 0), mask=image)
-        
+
         print('blur', blur)
         for _ in range(blur):
             print("bluring...")
-            new_image = new_image.filter(ImageFilter.BLUR)
+            background = background.filter(ImageFilter.BLUR)
+            
+        new_image.paste(background, (0, 0))
+        new_image.paste(image, (0, 0), mask=image)
+        
 
         new_image_io = BytesIO()
         new_image.save(new_image_io, format='PNG')
@@ -143,11 +145,12 @@ def replace_bg_color(request):
         image = Image.open(BytesIO(image.read()))
 
         new_image = Image.new('RGBA', image.size, (red, green, blue, 255))
-        new_image.paste(image, (0, 0), mask=image)
 
         for _ in range(blur):
             print('blurring')
             new_image = new_image.filter(ImageFilter.BLUR)
+
+        new_image.paste(image, (0, 0), mask=image)
 
         new_image_io = BytesIO()
         new_image.save(new_image_io, format='PNG')
