@@ -476,7 +476,7 @@ class U2NET:
     def process_image(self, image_bytes, resolution):
         """
         Removes background from image and returns PIL RGBA Image.
-        :param image_data: image bytes
+        :param image_data: image bytes, resolution: the image size
         :return: PIL RGBA Image. If an error reading the image is detected, returns False.
         """
         start_time = time.time()  # Time counter

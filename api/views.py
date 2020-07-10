@@ -1,6 +1,6 @@
 import os, gdown
 
-from PIL import Image
+from PIL import Image, ImageFilter
 from io import BytesIO
 from .model import U2NET
 from skimage import transform
@@ -64,8 +64,11 @@ def replace_bg_image(request):
 
     image = request.FILES.get("image", None)
     background = request.FILES.get("background", None)
+    blur = request.data.get("blur", 0)
     
     try:
+        blur = int(blur)
+
         if image is None or background is None:
             raise AttributeError
 
@@ -102,6 +105,11 @@ def replace_bg_image(request):
         new_image.paste(background, (0, 0))
         new_image.paste(image, (0, 0), mask=image)
         
+        print('blur', blur)
+        for _ in range(blur):
+            print("bluring...")
+            new_image = new_image.filter(ImageFilter.BLUR)
+
         new_image_io = BytesIO()
         new_image.save(new_image_io, format='PNG')
         new_image_bytes = InMemoryUploadedFile(new_image_io, None, 'result.png', 'image/png', new_image_io.tell, None)
@@ -121,8 +129,11 @@ def replace_bg_color(request):
     red = request.data.get("red", None)
     green = request.data.get("green", None)
     blue = request.data.get("blue", None)
+    blur = request.data.get("blur", 0)
 
     try:
+        blur = int(blur)
+
         if image is None:
             raise AttributeError
 
@@ -133,6 +144,10 @@ def replace_bg_color(request):
 
         new_image = Image.new('RGBA', image.size, (red, green, blue, 255))
         new_image.paste(image, (0, 0), mask=image)
+
+        for _ in range(blur):
+            print('blurring')
+            new_image = new_image.filter(ImageFilter.BLUR)
 
         new_image_io = BytesIO()
         new_image.save(new_image_io, format='PNG')
